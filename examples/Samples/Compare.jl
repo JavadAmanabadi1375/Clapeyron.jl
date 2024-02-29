@@ -80,6 +80,7 @@ for i ∈ 1:model_lenght
 end
 # for i ∈ 1:model_lenght
     for f in T
+        
     ∂p∂V,∂p∂T,∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T= Gathering_Derivatives.(models[9],p,f)
     append!(∂p∂V_v,∂p∂V)
     append!(∂p∂T_v,∂p∂T)
@@ -131,10 +132,10 @@ end
 # plt.plot(xAxix,Cp[6]*(1e6),label="PR",linestyle=(0, (3, 1, 1, 1, 1, 1)))
 # plt.plot(xAxix,Cp[7]*(1e6),label="PCSAFT",linestyle=(0, (3, 1, 1, 1, 1, 1)))
 # plt.plot(xAxix,Cp[8]*(1e6),label="vdW",linestyle=(0, (3, 1, 1, 1, 1, 1)))
-# plt.plot(xAxix,Cp[9]*(1e6),label="CPA",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+plt.plot(xAxix,Cp[9]*(1e6),label="CPA",linestyle=(0, (3, 1, 1, 1, 1, 1)))
 # plt.plot(xAxix,yAxis,label="experimental","o",color="k")
 
-plt.plot(xAxix,∂p∂T_v,label="CPA",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+# plt.plot(xAxix,∂p∂T_v,label="CPA",linestyle=(0, (3, 1, 1, 1, 1, 1)))
 
 if Comparison_Property=="Cp_J_gk" || Comparison_Property=="Cv_J_gk"
 

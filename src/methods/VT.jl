@@ -303,7 +303,26 @@ function _VT_fugacity_coefficient(model::EoSModel,V,T,z::SingleComp)
     return SVector(ϕ)
 end
 
+"""
+In this section I want to export all second derivatives to get better insight into the charactrization of 
+each of these derivatives in the calculation of second-order properties.
 
-#Hi everybody
+[∂F/∂T   (∂^2 F)/〖∂T〗^2    (∂^2 F)/〖∂V〗^2   (∂^2 F)/∂T∂V]
+
+"""
+function VT_Gathering_Derivatives(model::EoSModel, V, T, z=SA[1.])
+    d²A = f_hess(model,V,T,z)
+    ∂²A∂V∂T = d²A[1,2]
+    ∂²A∂V² = d²A[1,1]
+    ∂²A∂T² = d²A[2,2]
+    # p0,∂p∂V = p∂p∂V(model,V,T,z)
+    dA, A = ∂f(model,V,T,z)
+    ∂A∂V, ∂A∂T = dA
+    # return (∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T,∂p∂V)
+    hess_p,grad_p,pval=∂2p(model,V,T,z)
+    return (grad_p[1],grad_p[2],∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T)
+end
+
+
 export second_virial_coefficient,pressure,cross_second_virial,equivol_cross_second_virial
 

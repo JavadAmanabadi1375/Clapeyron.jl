@@ -580,6 +580,19 @@ function VT_partial_property(model::EoSModel, V, T, z, ::typeof(volume))
     return -dpdni ./ dpdv
 end
 
+"""
+In this function I want to gather all derivatives to get better insight into the characterization of 
+    each derivative in second-order properties
+
+"""
+function Gathering_Derivatives(model::EoSModel, p, T, z=SA[1.]; phase=:unknown, threaded=true, vol0=nothing)
+    V = volume(model, p, T, z; phase, threaded, vol0)
+    # ∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T,∂p∂V= VT_Gathering_Derivatives(model,V,T,z)
+    # return (∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T,∂p∂V)
+    ∂p∂V,∂p∂T,∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T= VT_Gathering_Derivatives(model,V,T,z)
+    return (∂p∂V,∂p∂T,∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T)
+end
+
 #first derivative order properties
 export entropy, internal_energy, enthalpy, gibbs_free_energy, helmholtz_free_energy
 export entropy_res, internal_energy_res, enthalpy_res, gibbs_free_energy_res, helmholtz_free_energy_res
@@ -592,3 +605,4 @@ export mass_density,molar_density, compressibility_factor
 #molar gradient properties
 export chemical_potential, activity_coefficient, fugacity_coefficient
 export mixing, excess, gibbs_solvation
+export Gathering_Derivatives
