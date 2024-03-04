@@ -320,7 +320,7 @@ function VT_Gathering_Derivatives(model::EoSModel, V, T, z=SA[1.])
     ∂A∂V, ∂A∂T = dA
     # return (∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T,∂p∂V)
     hess_p,grad_p,pval=∂2p(model,V,T,z)
-    return (grad_p[1],grad_p[2],∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T)
+    return (grad_p[1],grad_p[2],∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T,A)
 end
 
 
