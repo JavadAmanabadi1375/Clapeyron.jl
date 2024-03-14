@@ -250,7 +250,8 @@ This method write for calculation of helmholtz energy contribution in the total 
     
 """
 
-function a_res_gathering(model::SAFTgammaMieModel, V, T, z)
+function a_res_gathering(model::SAFTgammaMieModel, p, T, z=SA[1.]; phase=:unknown, threaded=true, vol0=nothing)
+    V = volume(model, p, T, z; phase, threaded, vol0)
     _data = @f(data)
     dgc,X,vrdata = _data
     _,ρS,ζi,_ζ_X,_ζst,σ3x,m̄ = vrdata
