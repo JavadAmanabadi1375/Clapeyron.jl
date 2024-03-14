@@ -252,14 +252,14 @@ This method write for calculation of helmholtz energy contribution in the total 
 
 function a_res_gathering(model::SAFTgammaMieModel, p, T, z=SA[1.]; phase=:unknown, threaded=true, vol0=nothing)
     V = volume(model, p, T, z; phase, threaded, vol0)
-    _data = @f(data)
+    _data = data(model, V, T, z)
     dgc,X,vrdata = _data
     _,ρS,ζi,_ζ_X,_ζst,σ3x,m̄ = vrdata
     vrdata_disp = (dgc,ρS,ζi,_ζ_X,_ζst,σ3x,m̄)
-    ahs=@f(a_hs,_data)
+    ahs=a_hs(model, V, T, z,_data)
     adisp=a_disp(model,V,T,X,vrdata_disp)/sum(z)
-    achain=@f(a_chain,_data)
-    aassociation=@f(a_assoc,_data)
+    achain=a_chain(model, V, T, z,_data)
+    aassociation=a_assoc(model, V, T, z,_data)
 
     return (ahs,adisp,achain,aassociation)
 end

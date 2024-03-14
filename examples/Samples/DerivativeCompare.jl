@@ -21,30 +21,31 @@ StatePlot="Isothermal" #You can choose either Isobaric or Isothermal
 Comparison_Property="Cv_J_gk"
 
 # Read data from database
-db_path= raw"C:\Users\javam\Desktop\Study Plan\Db\PhdDb.db"
+db_path= raw"C:\Users\javam\Desktop\Study Plan\Db\AlkanesSR.db"
 db=SQLite.DB(db_path)
 
 CompoundName="propane"
 CompoundNameK=uppercasefirst(CompoundName)
 
-    # model1 = SRK([CompoundName])
-    model1 = SRK([CompoundName];idealmodel=JobackIdeal)
-    model2 = JobackIdeal([CompoundName])
-    model3 = GERG2008([CompoundName])
-    model4 = CKSAFT([CompoundName];idealmodel=JobackIdeal)
+    # model1 = SRK([CompoundName];idealmodel=JobackIdeal)
+    # model2 = JobackIdeal([CompoundName])
+    # model3 = GERG2008([CompoundName])
+    # model4 = CKSAFT([CompoundName];idealmodel=JobackIdeal)
     # model5 = SAFTgammaMie([CompoundName];idealmodel=JobackIdeal)
-    model6 = PR([CompoundName];idealmodel=JobackIdeal)
-    model7 = PCSAFT([CompoundName];idealmodel=JobackIdeal)
-    # model9 = PR([CompoundName];)
-    model8 = vdW([CompoundName];idealmodel=JobackIdeal)
-    model9 = CPA([CompoundName];idealmodel=JobackIdeal)
-    models = [model1,model2,model3,model4,
-            model6,model7,model8,model9];
+    # model6 = PR([CompoundName];idealmodel=JobackIdeal)
+    # model7 = PCSAFT([CompoundName];idealmodel=JobackIdeal)
+    # model8 = vdW([CompoundName];idealmodel=JobackIdeal)
+    # model9 = CPA([CompoundName];idealmodel=JobackIdeal)
+    # models = [model1,model2,model3,model4,
+    #         model6,model7,model8,model9];
+
+    model1 = SAFTgammaMie([CompoundName];idealmodel=JobackIdeal)
+    models = [model1];
 
 
 
 TableName=CompoundNameK*"_"*StatePlot
-condition1= StatePlot=="Isothermal" ? "Temperature_k==500" : "Pressure_MPa==2"
+condition1= StatePlot=="Isothermal" ? "Temperature_k==300" : "Pressure_MPa==2"
 qs1 = "SELECT * FROM $TableName WhERE $condition1"
 # qs1 = "SELECT * FROM $TableName WhERE $condition1 AND Phase=='liquid'"
 data1 = SQLite.DBInterface.execute(db, qs1)
@@ -55,7 +56,7 @@ x1= StatePlot=="Isobaric" ? df1.Temperature_k : df1.Pressure_MPa
 # p =2*1e6
 # T = df1.Temperature_k 
 p = df1.Pressure_MPa.*1e6
-T =  500
+T =  300
 Cp = []
 
 
@@ -86,7 +87,8 @@ if Comparison_Property=="Cp_J_gk" || Comparison_Property=="Cv_J_gk"
 end
 
 
-ModelNames=["SRK","JobackIdeal","GERG2008","CKSAFT","SAFTgammaMie","PR","PC-SAFT","VdW","CPA"]
+# ModelNames=["SRK","JobackIdeal","GERG2008","CKSAFT","SAFTgammaMie","PR","PC-SAFT","VdW","CPA"]
+ModelNames=["SAFTgammaMie"]
 plt.clf()
 for i ∈ 1:model_lenght
 
@@ -98,10 +100,15 @@ for i ∈ 1:model_lenght
     ∂p∂V_v=[]
     ∂p∂T_v=[]
     A_v=[]
+    ahs_V=[]
+    adisp_V=[]
+    achain_V=[]
+    aassociation_V=[]
 
     for f in p
 
         ∂p∂V,∂p∂T,∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T,A= Gathering_Derivatives.(models[i],f,T)
+        ahs,adisp,achain,aassociation=a_res_gathering.(models[i],f,T)
         append!(∂p∂V_v,∂p∂V)
         append!(∂p∂T_v,∂p∂T)
         append!(∂²A∂V∂T_v,∂²A∂V∂T)
@@ -110,11 +117,16 @@ for i ∈ 1:model_lenght
         append!(∂A∂T_v,∂A∂T)
         append!(∂²A∂T²_v,∂²A∂T²)
         append!(A_v,A)
+        append!(ahs_V,A)
+        append!(adisp_V,A)
+        append!(achain_V,A)
+        append!(aassociation_V,A)
     
     
     end
 
-    plt.plot(xAxix,-T.*∂²A∂T²_v,label=ModelNames[i],linestyle=(0, (3, 1, 1, 1)))
+    plt.plot(xAxix,∂p∂T_v,label=ModelNames[i],linestyle=(0, (3, 1, 1, 1)))
+    plt.plot(xAxix,A_v,label=ModelNames[i],linestyle=(0, (3, 1, 1, 1)))
     xlabelName= StatePlot=="Isobaric" ? "Tr" : "Pr" 
     plt.xlabel("Pr",fontsize=16)
     plt.ylabel("A",fontsize=16)
