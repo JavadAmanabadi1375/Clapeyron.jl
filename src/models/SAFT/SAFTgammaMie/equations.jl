@@ -179,3 +179,4 @@ function d_gc_av(model::SAFTgammaMieModel,V,T,z::SingleComp,_d_gc = d(model,V,T,
     end
     return SA[cbrt(di*∑zinv2)]
 end
+

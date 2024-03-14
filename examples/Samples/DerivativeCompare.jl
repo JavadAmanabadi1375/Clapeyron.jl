@@ -24,7 +24,7 @@ Comparison_Property="Cv_J_gk"
 db_path= raw"C:\Users\javam\Desktop\Study Plan\Db\PhdDb.db"
 db=SQLite.DB(db_path)
 
-CompoundName="ethane"
+CompoundName="propane"
 CompoundNameK=uppercasefirst(CompoundName)
 
     # model1 = SRK([CompoundName])
@@ -65,13 +65,7 @@ for i ∈ 1:model_lenght
     append!(Cp,[isochoric_heat_capacity.(models[i],p,T)])
     # append!(Cp,[isobaric_heat_capacity.(models[i],p,T)])
     # append!(Cp,[joule_thomson_coefficient.(models[i],p,T)])
-    # ∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T,∂p∂V=Gathering_Derivatives.(models[i],p,T)
-    # append!(∂²A∂V∂T_v,[∂²A∂V∂T])
-    # append!(∂²A∂V²_v,[∂²A∂V²])
-    # append!(∂²A∂T²_v,[∂²A∂T²])
-    # append!(∂A∂V_v,[∂A∂V])
-    # append!(∂A∂T_v,[∂A∂T])
-    # append!(∂p∂V_v,[∂p∂V])
+    
 end
 
 
@@ -120,7 +114,7 @@ for i ∈ 1:model_lenght
     
     end
 
-    plt.plot(xAxix,A_v,label=ModelNames[i],linestyle=(0, (3, 1, 1, 1)))
+    plt.plot(xAxix,-T.*∂²A∂T²_v,label=ModelNames[i],linestyle=(0, (3, 1, 1, 1)))
     xlabelName= StatePlot=="Isobaric" ? "Tr" : "Pr" 
     plt.xlabel("Pr",fontsize=16)
     plt.ylabel("A",fontsize=16)

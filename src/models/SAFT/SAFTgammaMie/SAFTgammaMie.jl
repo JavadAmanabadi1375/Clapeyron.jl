@@ -244,3 +244,23 @@ function recombine_impl!(model::SAFTgammaMieModel)
     model.vrmodel.params.epsilon_assoc.values.values[:] = comp_epsilon_assoc.values.values
     return model
 end
+
+"""
+This method write for calculation of helmholtz energy contribution in the total helmoltz energy
+    
+"""
+
+function a_res_gathering(model::SAFTgammaMieModel, V, T, z)
+    _data = @f(data)
+    dgc,X,vrdata = _data
+    _,ρS,ζi,_ζ_X,_ζst,σ3x,m̄ = vrdata
+    vrdata_disp = (dgc,ρS,ζi,_ζ_X,_ζst,σ3x,m̄)
+    ahs=@f(a_hs,_data)
+    adisp=a_disp(model,V,T,X,vrdata_disp)/sum(z)
+    achain=@f(a_chain,_data)
+    aassociation=@f(a_assoc,_data)
+
+    return (ahs,adisp,achain,aassociation)
+end
+
+export a_res_gathering
