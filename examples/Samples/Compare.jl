@@ -23,20 +23,19 @@ Comparison_Property="Soundspd_m_s"
 db_path= raw"C:\Users\javam\Desktop\Study Plan\Db\PhdDb.db"
 db=SQLite.DB(db_path)
 
-CompoundName="methane"
+CompoundName="decane"
 CompoundNameK=uppercasefirst(CompoundName)
 
     # model1 = SRK([CompoundName])
-    model1 = SRK([CompoundName];idealmodel=JobackIdeal)
-    model2 = GERG2008([CompoundName])
-    model3 = CKSAFT([CompoundName];idealmodel=JobackIdeal)
-    model4 = SAFTgammaMie([CompoundName];idealmodel=JobackIdeal)
-    model5 = PR([CompoundName];idealmodel=JobackIdeal)
-    model6 = PCSAFT([CompoundName];idealmodel=JobackIdeal)
-    model7 = vdW([CompoundName];idealmodel=JobackIdeal)
-    model8 = CPA([CompoundName];idealmodel=JobackIdeal)
-    models = [model1,model2,model3,model4,model5,
-            model6,model7,model8];
+    model1 = SRK([CompoundName])
+    # model2 = GERG2008([CompoundName])
+    # model3 = CKSAFT([CompoundName];idealmodel=JobackIdeal)
+    # model4 = SAFTgammaMie([CompoundName];idealmodel=JobackIdeal)
+    # model5 = PR([CompoundName])
+    # model6 = PCSAFT([CompoundName];idealmodel=JobackIdeal)
+    # model7 = vdW([CompoundName];idealmodel=JobackIdeal)
+    # model8 = CPA([CompoundName];idealmodel=JobackIdeal)
+    models = [model5];
 
 
 
