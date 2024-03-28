@@ -18,4 +18,4 @@ species,groups
 "methanol,""[""""-CH3"""" => 1, """"-OH (alcohol)"""" => 1]"""
 "ethanol,""[""""-CH3"""" => 1,""""-CH2-"""" => 1, """"-OH (alcohol)"""" => 1]"""
 "acetone~|~propanone,""[""""-CH3"""" => 2,"""">C=O (non-ring)""""=>1]"""
-"methane,""[""""CH4"""" => 1]"""
+"methane,""[""""-CH3"""" => 1]"""

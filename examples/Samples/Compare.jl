@@ -16,14 +16,14 @@ const  R =8.314 #J/mole*k
 
 # Comparison_Compound=["Methane","Ethane","Propane","Butane","Pentane","Hexane","Heptane","Octane","Nonane","Decane"]
 # Comparison_Compound=["Pentane"]
-StatePlot="Isothermal" #You can choose either Isobaric or Isothermal
-Comparison_Property="Cv_J_gk"
+StatePlot="Isobaric" #You can choose either Isobaric or Isothermal
+Comparison_Property="Soundspd_m_s"
 
 # Read data from database
-db_path= raw"C:\Users\javam\Desktop\Study Plan\Db\AlkanesSR.db"
+db_path= raw"C:\Users\javam\Desktop\Study Plan\Db\PhdDb.db"
 db=SQLite.DB(db_path)
 
-CompoundName="octane"
+CompoundName="methane"
 CompoundNameK=uppercasefirst(CompoundName)
 
     # model1 = SRK([CompoundName])
@@ -41,39 +41,40 @@ CompoundNameK=uppercasefirst(CompoundName)
 
 
 TableName=CompoundNameK*"_"*StatePlot
-condition1= StatePlot=="Isothermal" ? "Temperature_k==400" : "Pressure_MPa==2"
-# qs1 = "SELECT * FROM $TableName WhERE $condition1"
+condition1= StatePlot=="Isothermal" ? "Temperature_k==400" : "Pressure_MPa==20"
+qs1 = "SELECT * FROM $TableName WhERE $condition1"
 # qs1 = "SELECT * FROM $TableName WhERE $condition1 AND Phase=='liquid'"
-qs1 = "SELECT * FROM $TableName WhERE $condition1 AND Phase=='liquid' AND Pressure_MPa>7" 
+# qs1 = "SELECT * FROM $TableName WhERE $condition1 AND Phase=='liquid' AND Pressure_MPa>7" 
 data1 = SQLite.DBInterface.execute(db, qs1)
 df1 = DataFrames.DataFrame(data1)
 x1= StatePlot=="Isobaric" ? df1.Temperature_k : df1.Pressure_MPa
 
 
-# p =2*1e6
-# T = df1.Temperature_k 
-p = df1.Pressure_MPa.*1e6
-T =  400
+p =20*1e6
+T = df1.Temperature_k 
+# p = df1.Pressure_MPa.*1e6
+# T =  400
 Cp = []
 ∂²A∂T²_v=[]
 
 model_lenght=length(models)
 for i ∈ 1:model_lenght
 
-    if i==4
+    # if i==4
 
-        for f in p
+    #     for f in T
 
-            ∂p∂V,∂p∂T,∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T,A= Gathering_Derivatives.(models[i],f,T)
-            append!(∂²A∂T²_v,∂²A∂T²)
+    #         ∂p∂V,∂p∂T,∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T,A= Gathering_Derivatives.(models[i],p,f)
+    #         append!(∂²A∂T²_v,∂²A∂T²)
         
-        end
-        append!(Cp,[-T.*∂²A∂T²_v])
+    #     end
+    #     append!(Cp,[-T.*∂²A∂T²_v])
 
-    else
-        append!(Cp,[isochoric_heat_capacity.(models[i],p,T)])
-    end
-    # append!(Cp,[speed_of_sound.(models[i],p,T)])
+    # else
+    #     append!(Cp,[isochoric_heat_capacity.(models[i],p,T)])
+    # end
+
+    append!(Cp,[speed_of_sound.(models[i],p,T)])
     # append!(Cp,[isochoric_heat_capacity.(models[i],p,T)])
     # append!(Cp,[isobaric_heat_capacity.(models[i],p,T)])
     # append!(Cp,[joule_thomson_coefficient.(models[i],p,T)])
@@ -101,14 +102,14 @@ elseif Comparison_Property=="Cv_J_gk"
 end
 
 
-plt.plot(xAxix,Cp[1]./R,label="SRK",linestyle="-.")
-plt.plot(xAxix,Cp[2]./R,label="GERG-2008",linestyle=(0, (3, 1, 1, 1)))
-plt.plot(xAxix,Cp[3]./R,label="CK-SAFT",linestyle=(0, (5, 1)))
-plt.plot(xAxix,Cp[4]./R,label="SAFT-γ Mie",linestyle=(0, (3, 1, 1, 1, 1, 1)))
-plt.plot(xAxix,Cp[5]./R,label="PR",linestyle=(0, (3, 1, 1, 1, 1, 1)))
-plt.plot(xAxix,Cp[6]./R,label="PCSAFT",linestyle=(0, (3, 1, 1, 1, 1, 1)))
-# plt.plot(xAxix,Cp[7]./R,label="vdW",linestyle=(0, (3, 1, 1, 1, 1, 1)))
-plt.plot(xAxix,Cp[8]./R,label="CPA",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+# plt.plot(xAxix,Cp[1]./R,label="SRK",linestyle="-.")
+# plt.plot(xAxix,Cp[2]./R,label="GERG-2008",linestyle=(0, (3, 1, 1, 1)))
+# plt.plot(xAxix,Cp[3]./R,label="CK-SAFT",linestyle=(0, (5, 1)))
+# plt.plot(xAxix,Cp[4]./R,label="SAFT-γ Mie",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+# plt.plot(xAxix,Cp[5]./R,label="PR",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+# plt.plot(xAxix,Cp[6]./R,label="PCSAFT",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+# # plt.plot(xAxix,Cp[7]./R,label="vdW",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+# plt.plot(xAxix,Cp[8]./R,label="CPA",linestyle=(0, (3, 1, 1, 1, 1, 1)))
 
 # plt.plot(xAxix,Cp[1]*(1e6),label="SRK",linestyle="-.")
 # plt.plot(xAxix,Cp[2]*(1e6),label="GERG-2008",linestyle=(0, (3, 1, 1, 1)))
@@ -119,14 +120,14 @@ plt.plot(xAxix,Cp[8]./R,label="CPA",linestyle=(0, (3, 1, 1, 1, 1, 1)))
 # # plt.plot(xAxix,Cp[7]*(1e6),label="vdW",linestyle=(0, (3, 1, 1, 1, 1, 1)))
 # plt.plot(xAxix,Cp[8]*(1e6),label="CPA",linestyle=(0, (3, 1, 1, 1, 1, 1)))
 
-# plt.plot(xAxix,Cp[1],label="SRK",linestyle="-.")
-# plt.plot(xAxix,Cp[2],label="GERG-2008",linestyle=(0, (3, 1, 1, 1)))
-# plt.plot(xAxix,Cp[3],label="CK-SAFT",linestyle=(0, (5, 1)))
-# plt.plot(xAxix,Cp[4],label="SAFT-γ Mie",linestyle=(0, (3, 1, 1, 1, 1, 1)))
-# plt.plot(xAxix,Cp[5],label="PR",linestyle=(0, (3, 1, 1, 1, 1, 1)))
-# plt.plot(xAxix,Cp[6],label="PCSAFT",linestyle=(0, (3, 1, 1, 1, 1, 1)))
-# # plt.plot(xAxix,Cp[7],label="vdW",linestyle=(0, (3, 1, 1, 1, 1, 1)))
-# plt.plot(xAxix,Cp[8],label="CPA",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+plt.plot(xAxix,Cp[1],label="SRK",linestyle="-.")
+plt.plot(xAxix,Cp[2],label="GERG-2008",linestyle=(0, (3, 1, 1, 1)))
+plt.plot(xAxix,Cp[3],label="CK-SAFT",linestyle=(0, (5, 1)))
+plt.plot(xAxix,Cp[4],label="SAFT-γ Mie",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+plt.plot(xAxix,Cp[5],label="PR",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+plt.plot(xAxix,Cp[6],label="PCSAFT",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+# plt.plot(xAxix,Cp[7],label="vdW",linestyle=(0, (3, 1, 1, 1, 1, 1)))
+plt.plot(xAxix,Cp[8],label="CPA",linestyle=(0, (3, 1, 1, 1, 1, 1)))
 
 
 plt.plot(xAxix,yAxis,label="experimental","o",color="k")
@@ -143,14 +144,15 @@ elseif Comparison_Property=="Cv_J_gk"
 
 else
 
-    plt.ylabel("$Comparison_Property",fontsize=16)
+    # plt.ylabel("$Comparison_Property",fontsize=16)
+    plt.ylabel("u (m/s)",fontsize=16)
 
 end
 xlabelName= StatePlot=="Isobaric" ? "Tr" : "Pr" 
 plt.xlabel(xlabelName,fontsize=16)
 
-plt.legend(loc="upper left",frameon=false,fontsize=6)
-plt.title(condition1*" "* CompoundNameK)
+plt.legend(loc="upper right",frameon=false,fontsize=10)
+# plt.title(condition1*" "* CompoundNameK)
 # plt.xlim([0.3,9])
 # plt.ylim([-1,1])
 display(plt.gcf())
