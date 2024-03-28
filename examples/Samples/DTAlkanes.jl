@@ -12,7 +12,7 @@ const  R =8.314 #J/mole*k
 
 StatePlot="Isothermal" #You can choose either Isobaric or Isothermal
 # Comparison_Property=["Cp_J_gk","Cv_J_gk","JouleThomson_K_MPa","Soundspd_m_s"]
-Comparison_Property=["Cv_J_gk"]
+Comparison_Property=["Cp_J_gk"]
 
 Comparison_Compound=["ethane","propane","butane","pentane","hexane","heptane","octane","nonane","decane"]
 # Comparison_Compound=["ethane","propane"]
@@ -29,7 +29,7 @@ db=SQLite.DB(db_path)
 # Open the Excel file
 file_path="C:\\Users\\javam\\ClapeyronNew\\Clapeyron.jl\\examples\\Samples\\AARD.xlsx"
 
-global  cellNo=61
+global  cellNo=7
 
 foreach(Comparison_Compound) do CompoundName
     CompoundNameK=uppercasefirst(CompoundName)
@@ -49,7 +49,7 @@ foreach(Comparison_Compound) do CompoundName
         # models = [model1,model2,model3,model4,model5,
         #         model6,model7,model8,model9];
 
-        model7 =  SAFTgammaMie([CompoundName];idealmodel=JobackIdeal)
+        model7 =  SAFTVRMie([CompoundName];idealmodel=JobackIdeal)
         models=[model7]
 
         model_lenght=length(models)
@@ -81,7 +81,7 @@ foreach(Comparison_Compound) do CompoundName
                 append!(Cp,[isobaric_heat_capacity.(models[i],p,T)])
 
             end
-            sheetname="Z"
+            sheetname="AQ"
             exp_values=(df1.Cp_J_gk.*df_Mw.Mw)
 
         elseif property=="Cv_J_gk"
@@ -91,7 +91,7 @@ foreach(Comparison_Compound) do CompoundName
                 append!(Cp,[isochoric_heat_capacity.(models[i],p,T)])
 
             end
-            sheetname="Y"
+            sheetname="AP"
             exp_values=(df1.Cv_J_gk.*df_Mw.Mw)
 
         elseif property=="JouleThomson_K_MPa"
@@ -101,7 +101,7 @@ foreach(Comparison_Compound) do CompoundName
                 append!(Cp,[joule_thomson_coefficient.(models[i],p,T)])
 
             end
-            sheetname="X"
+            sheetname="AO"
             exp_values=(df1.JouleThomson_K_MPa*(1e-6))
 
         elseif property=="Soundspd_m_s"
@@ -111,7 +111,7 @@ foreach(Comparison_Compound) do CompoundName
                 append!(Cp,[speed_of_sound.(models[i],p,T)])
 
             end
-            sheetname="AA"
+            sheetname="AR"
             exp_values=(df1.Soundspd_m_s)
 
         end

@@ -29,7 +29,7 @@ db=SQLite.DB(db_path)
 # Open the Excel file
 file_path="C:\\Users\\javam\\ClapeyronNew\\Clapeyron.jl\\examples\\Samples\\AARD.xlsx"
 
-global  cellNo=61
+global  cellNo=7
 
 foreach(Comparison_Compound) do CompoundName
     CompoundNameK=uppercasefirst(CompoundName)
@@ -84,7 +84,7 @@ foreach(Comparison_Compound) do CompoundName
                     append!(∂²A∂T²_v,∂²A∂T²)
                 
                 end
-            sheetname="U"
+            sheetname="AP"
             exp_values=(df1.Cv_J_gk.*df_Mw.Mw)
 
         end
