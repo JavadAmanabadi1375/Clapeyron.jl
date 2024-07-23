@@ -1,0 +1,87 @@
+Clapeyron Database File
+GC molar masses single data
+species,Mw
+-CH3,15.035
+-CH2-,14.027
+>CH-,13.019
+>C<,12.011
+=CH2,14.027
+=CH-,13.019
+=C<,12.011
+=C=,12.011
+CH,13.019
+C,12.011
+ring-CH2-,14.027
+ring>CH-,13.019
+ring>C<,12.011
+ring=CH-,13.019
+ring=C<,12.011
+-F,19.9984
+-Cl,35.45
+-Br,79.904
+-I,126.90447
+-OH (alcohol),17.008
+-OH (phenol),17.008
+-O- (non-ring),15.999
+-O- (ring),15.999
+>C=O (non-ring),28.01
+>C=O (ring),28.01
+O=CH- (aldehyde),29.018
+-COOH (acid),45.017
+-COO- (ester),44.009
+=O (other than above),15.999
+-NH2,16.024
+>NH (non-ring),15.015
+>NH (ring),15.015
+>N- (non-ring),14.007
+-N= (non-ring),14.007
+-N= (ring),14.007
+=NH,15.015
+-CN,26.019
+-NO2,46.005
+-SH,33.07
+-S- (non-ring),32.06
+-S- (ring),32.06
+CH3,15.035
+CH2,14.027
+CH2OE,14.027
+CH,13.019
+C,12.011
+aCH,13.019
+aCCH2,26.03728
+aCCH,25.02934
+CH2=,14.027
+CH=,14.027
+cCH2,14.027
+COOH,45.017
+CH3COCH3,58.08
+COO,44.009
+H2O,18.02
+CH3OH,32.04
+CH4,16.04
+CO2,44.01
+OH,17.008
+CH2OH,31.03
+CHOH,30.03
+NH2,16.024
+NH,15.015
+N,14.007
+cNH,15.015
+cN,14.007
+C=,12.011
+aCCH3,57.04522
+aCOH,29.018
+cCH,13.019
+cCHNH,28.03328
+cCHN,27.02534
+aCCOaC,52.0315
+aCCOOH,57.02814
+aCNHaC,39.03604
+CH3CO,43.04462
+[CH2][OCH2],16.027
+N2,28.014
+SF6,146.055
+cO,16.00
+OH (primary),17.008
+Na+,22.989
+Cl-,35.453
