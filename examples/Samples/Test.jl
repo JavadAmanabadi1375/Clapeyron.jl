@@ -15,3 +15,5 @@ exp_values=[1,2,3,4,5,6,7,8,9.8585,10]
 aa=[(1,2,3),(4,5,6),(7,8,9)]
 first_elements = [x[1] for x in aa]
 println(first_elements)
+a=3
+

@@ -25,7 +25,6 @@ ModelNames=["SRK","PR","CPA","CK-SAFT","PC-SAFT",
 db_path= raw"C:\Users\javam\Desktop\Study Plan\Db\AlkanesSR.db"
 db=SQLite.DB(db_path)
 
-
 # Open the Excel file
 file_path="C:\\Users\\javam\\ClapeyronNew\\Clapeyron.jl\\examples\\Samples\\AARDN.xlsx"
 
@@ -305,8 +304,6 @@ foreach(Comparison_Compound) do CompoundName
                     
                     end
 
-
-            
         end
 
     end

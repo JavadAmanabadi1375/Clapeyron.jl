@@ -10,26 +10,27 @@ import PyPlot; const plt = PyPlot
 
 const  R =8.314 #J/mole*k
 
-StatePlot="Isothermal" #You can choose either Isobaric or Isothermal
+StatePlot="L" #You can choose either Isobaric or Isothermal
 Comparison_Property=["dPdT","dPdV","Density_Kg_m3","Psat"]
-# Comparison_Property=["dPdT"]
+# Comparison_Property=["Psat"]
 
-Comparison_Compound=["ethane","propane","butane","pentane","hexane","heptane","octane","nonane","decane"]
-# Comparison_Compound=["nitrogen"]
-# Comparison_Compound=["methane"]
+# Comparison_Compound=["ethane","propane","butane","pentane","hexane","heptane","octane","nonane","decane"]
+# Comparison_Compound=["nonane","decane"]
+Comparison_Compound=["methane"]
 ModelNames=["SRK","PR","CPA","CK-SAFT","PC-SAFT",
             "SAFT-VR Mie (2013)","SAFT-γ-Mie","GERG (2008)"]
 
 
 # Read data from database
-db_path= raw"C:\Users\javam\OneDrive - Danmarks Tekniske Universitet\PhD\Database\PhDdb.db"
+db_path= raw"C:\Users\javam\OneDrive - Danmarks Tekniske Universitet\PhD\Database\RegionsT.db"
 db=SQLite.DB(db_path)
 
 
 # Open the Excel file
-file_path="C:\\Users\\javam\\ClapeyronNew\\Clapeyron.jl\\examples\\Samples\\AARDF.xlsx"
+file_path="C:\\Users\\javam\\OneDrive - Danmarks Tekniske Universitet\\PhD\\Packages\\Clapeyron\\Clapeyron.jl\\examples\\Samples\\AARDF.xlsx"
 
-global  cellNo=7
+
+global  cellNo=6
 
 foreach(Comparison_Compound) do CompoundName
     CompoundNameK=uppercasefirst(CompoundName)
@@ -47,35 +48,33 @@ foreach(Comparison_Compound) do CompoundName
     models = [model1,model2,model3,model4,model5,model6,model7,model8];
     model_lenght=length(models)
 
+    qs_Mw="SELECT * FROM Com_Properties WHERE ComName== '$CompoundNameK'" 
+    data_Mw = SQLite.DBInterface.execute(db, qs_Mw)
+    df_Mw = DataFrames.DataFrame(data_Mw)
+    df_Mw_Tc_k=df_Mw.Tc_k[1]
+
     TableName=CompoundNameK*"_"*StatePlot
-    condition1= StatePlot=="Isothermal" ? "Temperature_k==300" : "Pressure_MPa==20"
-    # qs1 = "SELECT * FROM $TableName WhERE $condition1"
-    qs1 = "SELECT * FROM $TableName WhERE $condition1 AND Phase=='liquid' AND Pressure_MPa>7" 
+    condition1= StatePlot=="L" ? "Round(Temperature_k / $df_Mw_Tc_k,2)==0.5" : "Pressure_MPa==20"
+    qs1 = "SELECT * FROM $TableName WhERE $condition1"
     data1 = SQLite.DBInterface.execute(db, qs1)
     df1 = DataFrames.DataFrame(data1)
     x1= StatePlot=="Isobaric" ? df1.Temperature_k : df1.Pressure_MPa
 
-    qs_Mw="SELECT * FROM Com_Properties WHERE ComName== '$CompoundNameK'" 
-    data_Mw = SQLite.DBInterface.execute(db, qs_Mw)
-    df_Mw = DataFrames.DataFrame(data_Mw)
-
-
     # p =20*1e6
     # T = df1.Temperature_k 
     p = df1.Pressure_MPa.*1e6
-    T=300
-
+    T=df1.Temperature_k[1]
+ 
     #-----------------dPdV, dPdT NIST data---
 
-    dPdV=((df1.Soundspd_m_s.*df1.Soundspd_m_s).*(df_Mw.Mw./1000).*(df1.Cv_J_gk.*df_Mw.Mw))./
-    ((df1.Cp_J_gk.*df_Mw.Mw).*(-df1.Volume_m3_Kg.*df1.Volume_m3_Kg).*1e-6)
-    dPdT=(-((((df1.Cp_J_gk.-df1.Cv_J_gk).*df_Mw.Mw.+R).*(dPdV))./(T))).^0.5
-
+    dPdV=((df1.Soundspd_m_s.*df1.Soundspd_m_s).*(df_Mw.Mw./1000).*(df1.Cv_J_molk))./
+    ((df1.Cp_J_molk).*(-df1.Volume_L_mol.*df1.Volume_L_mol).*1e-6)
+    dPdT=(-((((df1.Cp_J_molk.-df1.Cv_J_molk).+R).*(dPdV))./(T))).^0.5
     #----------------------------------------
 
     foreach(Comparison_Property) do property
         
-        for i ∈ 4:4
+        for i ∈ 3:3
             
             ∂²A∂T²_v=[]
             Cp = []
@@ -92,7 +91,7 @@ foreach(Comparison_Compound) do CompoundName
 
             for f in p
     
-                ∂p∂V,∂p∂T,∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T,A= Gathering_Derivatives.(models[i],f,T,vol0=3e-5)
+                ∂p∂V,∂p∂T,∂²A∂V∂T,∂²A∂V²,∂²A∂T²,∂A∂V,∂A∂T,A= Gathering_Derivatives.(models[i],f,T,vol0=4.053258655186213e-05)
                 # ahs,adisp,achain,aassociation=a_res_gathering.(models[i],f,T)
                 append!(∂p∂V_v,∂p∂V)
                 append!(∂p∂T_v,∂p∂T)
@@ -110,10 +109,11 @@ foreach(Comparison_Compound) do CompoundName
                 Cp=∂p∂T_v
                 exp_values=dPdT
                 # CPA Model results ------------------------------------
-                qs_CERE = "SELECT * FROM CERE"
-                data_CERE = SQLite.DBInterface.execute(db, qs_CERE)
-                df_CERE = DataFrames.DataFrame(data_CERE)
-                # Cp=df_CERE.dPdT_C7
+                # TableNameC=CompoundNameK*"_"*"CPA"
+                # qs_CERE = "SELECT * FROM $TableNameC"
+                # data_CERE = SQLite.DBInterface.execute(db, qs_CERE)
+                # df_CERE = DataFrames.DataFrame(data_CERE)
+                # Cp=df_CERE.dPdT
                 #-------------------CPA Model results---------------------
 
 
@@ -149,10 +149,11 @@ foreach(Comparison_Compound) do CompoundName
                 exp_values=dPdV
 
                 # CPA Model results ------------------------------------
-                qs_CERE = "SELECT * FROM CERE"
-                data_CERE = SQLite.DBInterface.execute(db, qs_CERE)
-                df_CERE = DataFrames.DataFrame(data_CERE)
-                # Cp=df_CERE.dPdV_C7
+                # TableNameC=CompoundNameK*"_"*"CPA"
+                # qs_CERE = "SELECT * FROM $TableNameC"
+                # data_CERE = SQLite.DBInterface.execute(db, qs_CERE)
+                # df_CERE = DataFrames.DataFrame(data_CERE)
+                # Cp=df_CERE.dPdV
                 #-------------------CPA Model results---------------------
 
                 if i==1
@@ -184,15 +185,16 @@ foreach(Comparison_Compound) do CompoundName
             elseif property=="Density_Kg_m3"
     
     
-                Cp=molar_density.(models[i],p,T,vol0=3e-5)
+                Cp=molar_density.(models[i],p,T,vol0=4.053258655186213e-05)
                 # exp_values=df1.Density_Kg_m3.*1000/(df_Mw.Mw)
-                exp_values=df1.Density_Kg_m3*1e3
+                exp_values=df1.Density_mol_L*1e3
 
                     # CPA Model results ------------------------------------
-                    qs_CERE = "SELECT * FROM CERE"
-                    data_CERE = SQLite.DBInterface.execute(db, qs_CERE)
-                    df_CERE = DataFrames.DataFrame(data_CERE)
-                    # Cp=df_CERE.Ro_mol_m3_C7
+                    # TableNameC=CompoundNameK*"_"*"CPA"
+                    # qs_CERE = "SELECT * FROM $TableNameC"
+                    # data_CERE = SQLite.DBInterface.execute(db, qs_CERE)
+                    # df_CERE = DataFrames.DataFrame(data_CERE)
+                    # Cp=df_CERE.Ro
                     #-------------------CPA Model results---------------------
 
                 if i==1
@@ -223,11 +225,17 @@ foreach(Comparison_Compound) do CompoundName
     
             elseif property=="Psat"
 
+                # TableNameC=CompoundNameK*"_"*"CPA"
+                # qs_CERE = "SELECT * FROM $TableNameC"
+                # data_CERE = SQLite.DBInterface.execute(db, qs_CERE)
+                # df_CERE = DataFrames.DataFrame(data_CERE)
+                # Cp=df_CERE.Psat
+
                 TableName=CompoundNameK*"_"*"SatL"
                 qs_sat="SELECT * FROM $TableName"
                 data_sat = SQLite.DBInterface.execute(db, qs_sat)
                 df_sat = DataFrames.DataFrame(data_sat)
-                exp_values=df_sat.Pressure_MPa.*1e6
+                exp_values=df_sat.Pressure_MPa*1e6    #change to MPa
                 sat = saturation_pressure.(models[i],df_sat.Temperature_k)
                 Cp=[x[1] for x in sat]
 
