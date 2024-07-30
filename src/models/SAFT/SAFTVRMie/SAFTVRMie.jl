@@ -136,6 +136,22 @@ function a_res(model::SAFTVRMie, V, T, z)
     return @f(a_hs,_data)+@f(a_dispchain,_data) + @f(a_assoc,_data)
 end
 
+#In this secion, three functions has been added to the a_res ------
+function a_res_hs(model::SAFTVRMieModel, V, T, z)
+    _data = @f(data)
+    return @f(a_hs,_data)
+end
+function a_res_chain(model::SAFTVRMieModel, V, T, z)
+    _data = @f(data)
+    return @f(a_hc,_data)
+end
+
+function a_res_disp(model::SAFTVRMieModel, V, T, z)
+    _data = @f(data)
+    return  @f(a_disp,_data)
+end
+#----------------Contribution of Hs,Chain, and Dispersion to dA---
+
 function a_mono(model::SAFTVRMieModel, V, T, z,_data = @f(data))
     return @f(a_hs,_data)+@f(a_disp,_data)
 end
