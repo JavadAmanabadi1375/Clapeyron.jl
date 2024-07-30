@@ -143,7 +143,7 @@ function a_res_hs(model::SAFTVRMieModel, V, T, z)
 end
 function a_res_chain(model::SAFTVRMieModel, V, T, z)
     _data = @f(data)
-    return @f(a_hc,_data)
+    return @f(a_chain,_data)
 end
 
 function a_res_disp(model::SAFTVRMieModel, V, T, z)
