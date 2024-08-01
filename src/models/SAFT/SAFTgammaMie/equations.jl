@@ -41,7 +41,9 @@ end
 #In this secion, three functions has been added to the a_res -----------------------------------------------
 function a_res_hs(model::SAFTgammaMieModel, V, T, z)
     _data = @f(data)
-    return @f(a_hs,_data)
+    _,_,ζi,_,_,_,m̄ = _data
+    ζ0,ζ1,ζ2,ζ3 = ζi
+    return bmcs_hs(ζ0,ζ1,ζ2,ζ3)
 end   
 function a_res_chain(model::SAFTgammaMieModel, V, T, z)
     _data = @f(data)

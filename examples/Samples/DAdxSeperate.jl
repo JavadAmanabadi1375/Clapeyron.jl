@@ -90,33 +90,33 @@ foreach(Tr) do Temperature
     ax_alph[1,1].plot(xAxis./df_Mw_Tc_k,∂Areshs∂V[2]*1e-6,label="SAFT-VR Mie",linestyle="-.",color="b",linewidth=2)
     ax_alph[1,1].plot(xAxis./df_Mw_Tc_k,∂Areshs∂V[3]*1e-6,label="SAFT-γ Mie",color="k",linewidth=2)
     ax_alph[1,1][:set_xlabel]("Tr",fontsize=14)
-    ax_alph[1,1][:set_ylabel]("\$∂A_{hs}^{res}∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
+    ax_alph[1,1][:set_ylabel]("\$∂A_{hs}^{res}/∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
     ax_alph[1,1].legend(loc="lower right",frameon=false,fontsize=10)
 
-    ax_alph[1,2].plot(xAxis./df_Mw_Tc_k,∂Areschain∂V[1]*1e-6,label="PCSAFT",linestyle="--",color="g",linewidth=2)
+    ax_alph[1,2].plot(xAxis./df_Mw_Tc_k,-∂Areschain∂V[1]*1e-6,label="PCSAFT",linestyle="--",color="g",linewidth=2)
     ax_alph[1,2].plot(xAxis./df_Mw_Tc_k,∂Areschain∂V[2]*1e-6,label="SAFT-VR Mie",linestyle="-.",color="b",linewidth=2)
     ax_alph[1,2].plot(xAxis./df_Mw_Tc_k,∂Areschain∂V[3]*1e-6,label="SAFT-γ Mie",color="k",linewidth=2)
     ax_alph[1,2][:set_xlabel]("Tr",fontsize=14)
-    ax_alph[1,2][:set_ylabel]("\$∂A_{chain}^{res}∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
-    ax_alph[1,2].legend(loc="lower right",frameon=false,fontsize=10)
+    ax_alph[1,2][:set_ylabel]("\$∂A_{chain}^{res}/∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
+    ax_alph[1,2].legend(loc="upper right",frameon=false,fontsize=10)
 
     ax_alph[2,1].plot(xAxis./df_Mw_Tc_k,∂Aresdisp∂V[1]*1e-6,label="PCSAFT",linestyle="--",color="g",linewidth=2)
     ax_alph[2,1].plot(xAxis./df_Mw_Tc_k,∂Aresdisp∂V[2]*1e-6,label="SAFT-VR Mie",linestyle="-.",color="b",linewidth=2)
     ax_alph[2,1].plot(xAxis./df_Mw_Tc_k,∂Aresdisp∂V[3]*1e-6,label="SAFT-γ Mie",color="k",linewidth=2)
     ax_alph[2,1][:set_xlabel]("Tr",fontsize=14)
-    ax_alph[2,1][:set_ylabel]("\$∂A_{disp}^{res}∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
+    ax_alph[2,1][:set_ylabel]("\$∂A_{disp}^{res}/∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
     ax_alph[2,1].legend(loc="upper right",frameon=false,fontsize=10)
 
     ax_alph[2,2].plot(xAxis./df_Mw_Tc_k,∂Ares∂V[1]*1e-6,label="PCSAFT",linestyle="--",color="g",linewidth=2)
     ax_alph[2,2].plot(xAxis./df_Mw_Tc_k,∂Ares∂V[2]*1e-6,label="SAFT-VR Mie",linestyle="-.",color="b",linewidth=2)
     ax_alph[2,2].plot(xAxis./df_Mw_Tc_k,∂Ares∂V[3]*1e-6,label="SAFT-γ Mie",color="k",linewidth=2)
     ax_alph[2,2][:set_xlabel]("Tr",fontsize=14)
-    ax_alph[2,2][:set_ylabel]("\$∂A^{res}∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
+    ax_alph[2,2][:set_ylabel]("\$∂A^{res}/∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
     ax_alph[2,2].legend(loc="upper left",frameon=false,fontsize=10)
 
 end
 display(plt.gcf())
-# plt.savefig("∂A∂V.pdf")
+plt.savefig("∂A∂V.pdf")
 
 
 
