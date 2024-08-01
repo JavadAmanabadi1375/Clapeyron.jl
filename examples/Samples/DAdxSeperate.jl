@@ -27,19 +27,19 @@ dbT=SQLite.DB(db_pathT)
 Tr=[0.7]
 
 plt.clf()
-fig_alph, ax_alph = plt.subplots(figsize=[12, 9])
+fig_alph, ax_alph = plt.subplots(2,2,figsize=[12, 9])
 
 foreach(Tr) do Temperature
 
     CompoundNameK=uppercasefirst(CompoundName)
 
-    model1 = SRK([CompoundName];idealmodel=JobackIdeal)
-    model2 = CPA([CompoundName];idealmodel=JobackIdeal,radial_dist = :KG,cubicmodel=RK,alpha=SoaveAlpha)
+    # model1 = SRK([CompoundName];idealmodel=JobackIdeal)
+    # model2 = CPA([CompoundName];idealmodel=JobackIdeal,radial_dist = :KG,cubicmodel=RK,alpha=SoaveAlpha)
     model3 = PCSAFT([CompoundName];idealmodel=JobackIdeal)
     model4 = SAFTVRMie([CompoundName];idealmodel=JobackIdeal)
     model5 = SAFTgammaMie([CompoundName];idealmodel=JobackIdeal)
 
-    models = [model1,model2,model3,model4,model5];
+    models = [model3,model4,model5];
     model_lenght=length(models)
 
     qs_Mw="SELECT * FROM Com_Properties WHERE ComName== '$CompoundNameK'" 
@@ -67,35 +67,55 @@ foreach(Tr) do Temperature
     T=dfT.Temperature_k
     xAxis=T
 
-    ∂²A∂T²_v=[]
-    ∂²A∂V∂T_v=[]
-    ∂²A∂V²_v=[]
-    ∂²A∂T²_v=[]
-    ∂A∂V_v=[]
-    ∂A∂T_v=[]
-    ∂p∂V_v=[]
-    ∂p∂T_v=[]
-    A_v=[]
+    ∂Ares∂V=[]
+    ∂Areshs∂V=[]
+    ∂Areschain∂V=[]
+    ∂Aresdisp∂V=[]
+
 
     for i=1:model_lenght
 
-       dA= Gathering_Res_Derivatives.(models[i],p,T)
-       append!(∂A∂V_v,[[dA[i][6] for i ∈ 1:length(T)]])
+       dAres= Gathering_Res_Derivatives.(models[i],p,T)
+       dAhs= Gathering_Derivatives_hs.(models[i],p,T)
+       dAchain= Gathering_Derivatives_chain.(models[i],p,T)
+       dAdisp= Gathering_Derivatives_disp.(models[i],p,T)
+       append!(∂Ares∂V,[[dAres[i][6] for i ∈ 1:length(T)]])
+       append!(∂Areshs∂V,[[dAhs[i][6] for i ∈ 1:length(T)]])
+       append!(∂Areschain∂V,[[dAchain[i][6] for i ∈ 1:length(T)]])
+       append!(∂Aresdisp∂V,[[dAdisp[i][6] for i ∈ 1:length(T)]])
 
     end
 
-    ax_alph.plot(xAxis./df_Mw_Tc_k,∂A∂V_v[1]*1e-6,label="SRK",linestyle="--",color="g",linewidth=2)
-    ax_alph.plot(xAxis./df_Mw_Tc_k,∂A∂V_v[2]*1e-6,label="CPA",linestyle="-.",color="b",linewidth=2)
-    ax_alph.plot(xAxis./df_Mw_Tc_k,∂A∂V_v[3]*1e-6,label="PCSAFT",linestyle=":",color="r",linewidth=2)
-    ax_alph.plot(xAxis./df_Mw_Tc_k,∂A∂V_v[5]*1e-6,label="SAFT-γ Mie",color="k",linewidth=2)
-    ax_alph[:set_xlabel]("Tr",fontsize=14)
-    ax_alph[:set_ylabel]("\$∂A^{res}∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
-    ax_alph.legend(loc="upper left",frameon=false,fontsize=10)
+    ax_alph[1,1].plot(xAxis./df_Mw_Tc_k,∂Areshs∂V[1]*1e-6,label="PCSAFT",linestyle="--",color="g",linewidth=2)
+    ax_alph[1,1].plot(xAxis./df_Mw_Tc_k,∂Areshs∂V[2]*1e-6,label="SAFT-VR Mie",linestyle="-.",color="b",linewidth=2)
+    ax_alph[1,1].plot(xAxis./df_Mw_Tc_k,∂Areshs∂V[3]*1e-6,label="SAFT-γ Mie",color="k",linewidth=2)
+    ax_alph[1,1][:set_xlabel]("Tr",fontsize=14)
+    ax_alph[1,1][:set_ylabel]("\$∂A_{hs}^{res}∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
+    ax_alph[1,1].legend(loc="lower right",frameon=false,fontsize=10)
 
-    display(plt.gcf())
+    ax_alph[1,2].plot(xAxis./df_Mw_Tc_k,∂Areschain∂V[1]*1e-6,label="PCSAFT",linestyle="--",color="g",linewidth=2)
+    ax_alph[1,2].plot(xAxis./df_Mw_Tc_k,∂Areschain∂V[2]*1e-6,label="SAFT-VR Mie",linestyle="-.",color="b",linewidth=2)
+    ax_alph[1,2].plot(xAxis./df_Mw_Tc_k,∂Areschain∂V[3]*1e-6,label="SAFT-γ Mie",color="k",linewidth=2)
+    ax_alph[1,2][:set_xlabel]("Tr",fontsize=14)
+    ax_alph[1,2][:set_ylabel]("\$∂A_{chain}^{res}∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
+    ax_alph[1,2].legend(loc="lower right",frameon=false,fontsize=10)
 
+    ax_alph[2,1].plot(xAxis./df_Mw_Tc_k,∂Aresdisp∂V[1]*1e-6,label="PCSAFT",linestyle="--",color="g",linewidth=2)
+    ax_alph[2,1].plot(xAxis./df_Mw_Tc_k,∂Aresdisp∂V[2]*1e-6,label="SAFT-VR Mie",linestyle="-.",color="b",linewidth=2)
+    ax_alph[2,1].plot(xAxis./df_Mw_Tc_k,∂Aresdisp∂V[3]*1e-6,label="SAFT-γ Mie",color="k",linewidth=2)
+    ax_alph[2,1][:set_xlabel]("Tr",fontsize=14)
+    ax_alph[2,1][:set_ylabel]("\$∂A_{disp}^{res}∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
+    ax_alph[2,1].legend(loc="upper right",frameon=false,fontsize=10)
+
+    ax_alph[2,2].plot(xAxis./df_Mw_Tc_k,∂Ares∂V[1]*1e-6,label="PCSAFT",linestyle="--",color="g",linewidth=2)
+    ax_alph[2,2].plot(xAxis./df_Mw_Tc_k,∂Ares∂V[2]*1e-6,label="SAFT-VR Mie",linestyle="-.",color="b",linewidth=2)
+    ax_alph[2,2].plot(xAxis./df_Mw_Tc_k,∂Ares∂V[3]*1e-6,label="SAFT-γ Mie",color="k",linewidth=2)
+    ax_alph[2,2][:set_xlabel]("Tr",fontsize=14)
+    ax_alph[2,2][:set_ylabel]("\$∂A^{res}∂V\\:(J\\:\\cdot K^{-1}\\cdot m^{3})\\cdot 1e6\$",fontsize=14)
+    ax_alph[2,2].legend(loc="upper left",frameon=false,fontsize=10)
 
 end
+display(plt.gcf())
 # plt.savefig("∂A∂V.pdf")
 
 

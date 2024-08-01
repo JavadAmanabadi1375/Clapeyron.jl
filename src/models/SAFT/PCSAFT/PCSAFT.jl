@@ -95,7 +95,7 @@ end
 function a_res_disp(model::PCSAFTModel, V, T, z, _data = @f(data))
     return  @f(a_disp,_data)
 end
-#delet extra overwrite function
+
 # ---------------- Improvement for gathereing the second derivative of Helmholtz respect to temperature, volume
 function data(model::PCSAFTModel,V,T,z)
     _d = @f(d)
